@@ -3,7 +3,7 @@ const express = require('express')
 const morgan = require('morgan')
 const helmet = require('helmet')
 const spdy = require('spdy')
-const movieAPI = require('../api/movies')
+const cinemaCatalogAPI = require('../api/cinemas-catalog')
 
 const start = (options) => {
   return new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ const start = (options) => {
       res.status(500).send('Something went wrong')
     })
 
-    movieAPI(app, options)
+    cinemaCatalogAPI(app, options)
 
     const debugApp = options.debug ? app : spdy.createServer(options.ssl, app)
 

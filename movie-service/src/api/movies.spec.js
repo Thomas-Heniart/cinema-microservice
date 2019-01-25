@@ -47,7 +47,8 @@ describe('Movies API', () => {
   beforeEach(() => {
     return server.start({
       port: 3000,
-      repository: testRepo
+      repository: testRepo,
+      debug: true
     }).then(serv => {
       app = serv
     })

@@ -25,6 +25,8 @@ config.db
         rep = repo
         return server.start({
           port: config.serverSettings.port,
+          ssl: config.serverSettings.ssl,
+          debug: config.serverSettings.debug,
           repository: repo
         })
       })
