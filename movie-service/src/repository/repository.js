@@ -8,7 +8,7 @@ const repository = (db) => {
   const getAllMovies = () => {
     return new Promise((resolve, reject) => {
       const movies = []
-      const cursor = collection.findAll()
+      const cursor = collection.find({})
       const addMovie = (movie) => {
         movies.push(movie)
       }

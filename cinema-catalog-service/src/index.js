@@ -3,8 +3,8 @@ const server = require('./server/server')
 const repository = require('./repository/repository')
 const config = require('./config/')
 
-console.log('--- Movie Service ---')
-console.log('Connecting to movies repository')
+console.log('--- Cinema catalog Service ---')
+console.log('Connecting to cinemas repository')
 
 process.on('uncaughtException', (err) => {
   console.error('Undhandle exception', err)

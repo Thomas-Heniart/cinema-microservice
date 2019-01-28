@@ -1,8 +1,8 @@
 'use strict'
+const ObjectId = require('mongodb').ObjectID
 
-const repository = (connection) => {
-  const collection = connection.db.collection('cinema')
-  const ObjectId = connection.ObjectId
+const repository = (db) => {
+  const collection = db.collection('cinemas')
 
   const getCinemasByCity = (cityId) => {
     return new Promise((resolve, reject) => {

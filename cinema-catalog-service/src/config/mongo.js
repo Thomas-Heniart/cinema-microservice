@@ -4,7 +4,7 @@ const getMongoUrl = (options) => {
   const user = options.user
   const password = encodeURIComponent(options.password)
   if (options.debug) {
-    return `mongodb://192.168.43.60:27017/cinema`
+    return `mongodb://${user}:${password}@192.168.1.20:27017/cinema?authSource=admin`
   }
   return `mongodb+srv://${user}:${password}@node-react-todo-list-cluster-vnzzs.mongodb.net/test?retryWrites=true`
 }
