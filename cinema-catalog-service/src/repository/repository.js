@@ -35,58 +35,61 @@ const repository = (db) => {
         }
         resolve(cinema)
       }
-      collection.find(query, projection, response)
+      collection.findOne(query, projection, response)
     })
   }
 
   const getCinemaScheduleByMovie = (options) => {
     return new Promise((resolve, reject) => {
-      const match = {
-        $match: {
-          'city_id': options.cityId,
-          'cinemaRooms.schedules.movie_id': options.moveId
-        }
-      }
-      const project = {
-        $project: {
-          'name': 1,
-          'cinemaRooms.schedules.time': 1,
-          'cinemaRooms.name': 1,
-          'cinemaRooms.format': 1
-        }
-      }
-      const unwind = [{ $unwid: '$cinemaRooms' }, { $unwid: '$cinemaRooms.schedules' }]
-      const group = [{
-        $group: {
-          _id: {
-            name: '$name',
-            room: '$cinemaRooms.name'
-          },
-          schedules: { $addToSet: '$cinemaRooms.schedules.time' }
-        }
-      }, {
-        $group: {
-          _id: '$_id.name',
-          schedules: {
-            $addToSet: {
-              room: '$_id.room',
-              schedules: '$schedules'
-            }
+      const schedules = []
+      const match = { $match: {
+        'city_id': options.cityId,
+        'cinemaRooms.schedules.movie_id': options.movieId
+      } }
+      const project = { $project: {
+        'name': 1,
+        'cinemaRooms.schedules': 1,
+        'cinemaRooms.name': 1,
+        'cinemaRooms.format': 1
+      } }
+      const unwind = [{ $unwind: '$cinemaRooms' }, { $unwind: '$cinemaRooms.schedules' }]
+      const group = [{ $group: {
+        _id: {
+          name: '$name',
+          room: '$cinemaRooms.name'
+        },
+        schedules: { $addToSet: '$cinemaRooms.schedules.time' }
+      } }, { $group: {
+        _id: '$_id.name',
+        schedules: {
+          $addToSet: {
+            room: '$_id.room',
+            schedules: '$schedules'
           }
         }
-      }]
-      const sendSchedules = (err, result) => {
-        if (err) {
-          reject(new Error(`An error occured while fetching cinema schedule by movie, err: ${err}`))
-        }
-        resolve(result)
+      } }]
+      const addSchedule = (schedule) => {
+        schedules.push(schedule)
       }
-      collection.aggregate([match, project, ...unwind, ...group], sendSchedules)
+      const sendSchedules = (err) => {
+        console.log(err)
+        if (err) {
+          reject(new Error(`An error has occured fetching schedules by movie, err: ${err}`))
+        }
+        resolve(schedules)
+      }
+      collection.aggregate([match, project, ...unwind, ...group])
+        .toArray((err, result) => {
+          if (err) {
+            reject(new Error(`An error has occured fetching schedules by movie, err: ${err}`))
+          }
+          resolve(result)
+        })
     })
   }
 
   const disconnect = () => {
-    connection.db.close()
+    db.close()
   }
 
   return Object.create({
