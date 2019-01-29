@@ -41,7 +41,6 @@ const repository = (db) => {
 
   const getCinemaScheduleByMovie = (options) => {
     return new Promise((resolve, reject) => {
-      const schedules = []
       const match = { $match: {
         'city_id': options.cityId,
         'cinemaRooms.schedules.movie_id': options.movieId
@@ -68,16 +67,6 @@ const repository = (db) => {
           }
         }
       } }]
-      const addSchedule = (schedule) => {
-        schedules.push(schedule)
-      }
-      const sendSchedules = (err) => {
-        console.log(err)
-        if (err) {
-          reject(new Error(`An error has occured fetching schedules by movie, err: ${err}`))
-        }
-        resolve(schedules)
-      }
       collection.aggregate([match, project, ...unwind, ...group])
         .toArray((err, result) => {
           if (err) {
